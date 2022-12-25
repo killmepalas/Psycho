@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="40dp"
+    tools:context=".CreateTestActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Создание теста"
+        android:id="@+id/txtCreateTest"
+        android:layout_centerHorizontal="true"
+        android:textSize="40sp"
+        />
+
+    <TableLayout
+        android:layout_centerVertical="true"
+        android:layout_marginTop="150dp"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/table_test_create"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtCreateTest"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp">
+
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="Название"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/etNameTest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:textSize="20sp" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="Описание"
+                android:textSize="20sp" />
+
+
+        </TableRow>
+        <TableRow>
+            <EditText
+                android:id="@+id/etDescriptionTest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Открыт"
+                android:textSize="20sp" />
+
+            <CheckBox
+                android:id="@+id/cbIsOpenTest"
+                android:layout_marginLeft="30dp"
+                ></CheckBox>
+
+        </TableRow>
+    </TableLayout>
+
+    <Button
+        android:id="@+id/btn_save_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/table_test_create"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:layout_marginTop="30dp"
+        android:text="Сохранить изменения"
+        android:textSize="15sp" />
+
+</RelativeLayout>

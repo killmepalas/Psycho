@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "53574948809",
+    "project_id": "psycho-48559",
+    "storage_bucket": "psycho-48559.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:53574948809:android:4e3cfa7be425dc722a3a18",
+        "android_client_info": {
+          "package_name": "com.killmepalas.psycho"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "53574948809-sn9fcsgbi1iqmp197l149759eenm1f9b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnqXxEYy4KTngGnKr6H_4OfsPHurBIgdk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "53574948809-sn9fcsgbi1iqmp197l149759eenm1f9b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

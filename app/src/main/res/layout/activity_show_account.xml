@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ShowAccountActivity">
+
+    <TextView
+        android:paddingTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/tAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Профиль пользователя"
+        android:textAlignment="center"
+        android:textSize="40sp"
+        android:layout_marginTop="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RelativeLayout
+        android:layout_centerVertical="true"
+        android:id="@+id/accountInformation"
+        android:background="@drawable/rounded"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content">
+    <TextView
+        android:layout_marginLeft="10dp"
+        android:id="@+id/accountEmail"
+        android:textColor="#696969"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Email"
+        android:textSize="30sp"
+        android:layout_marginTop="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_marginLeft="10dp"
+        android:textColor="#696969"
+        android:id="@+id/accountNames"
+        android:layout_width="wrap_content"
+        android:textSize="25sp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Без имени"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_below="@+id/accountEmail" />
+
+    <TextView
+        android:layout_marginLeft="10dp"
+        android:textColor="#696969"
+        android:id="@+id/accountAge"
+        android:layout_width="wrap_content"
+        android:textSize="25sp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Возраст неизвестен"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_below="@+id/accountNames" />
+
+    <TextView
+        android:layout_marginLeft="10dp"
+        android:textColor="#696969"
+        android:layout_marginBottom="30dp"
+        android:id="@+id/accountRole"
+        android:layout_width="wrap_content"
+        android:textSize="20sp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Роль"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_below="@+id/accountAge" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/addPsychologist"
+        android:layout_below="@+id/accountInformation"
+        android:layout_centerHorizontal="true"
+        android:text="Записаться к психологу"
+        android:visibility="invisible"
+        android:textSize="20sp"
+        android:layout_marginTop="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/btnUpdateProfile"
+        android:layout_below="@+id/accountInformation"
+        android:layout_centerHorizontal="true"
+        android:text="Редактировать профиль"
+        android:visibility="invisible"
+        android:textSize="20sp"
+        android:layout_marginTop="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/btnRemovePsychologist"
+        android:layout_below="@+id/accountInformation"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"
+        android:text="Отписаться от психолога"
+        android:backgroundTint="#696969"
+        android:textSize="20sp"
+        android:layout_marginTop="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:id="@+id/tvToPsyc"
+        android:text="Прокачаться до психолога"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/btnRemovePsychologist"/>
+
+</RelativeLayout>
