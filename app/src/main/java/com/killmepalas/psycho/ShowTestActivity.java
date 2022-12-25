@@ -19,14 +19,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.killmepalas.psycho.model.Account;
+import com.killmepalas.psycho.model.Grade;
+
+import java.util.Objects;
 
 public class ShowTestActivity extends AppCompatActivity {
-    private TextView tName, tDescription, tPsychologistId;
+    private TextView tName, tDescription, tPsychologistId, tGrade;
     private Button btnPassTest, btnUpdateTest, btnDeleteTest, btnShowQuestions;
     private FirebaseAuth mAuth;
     private FirebaseUser curUser;
     private DatabaseReference refUsers;
     private DatabaseReference refTests;
+    private DatabaseReference refGrade;
     private String psychId, tId;
     private Account user;
     private boolean tIsOpen;
@@ -38,15 +42,35 @@ public class ShowTestActivity extends AppCompatActivity {
         init();
         getIntentMain();
         getButtons();
+
+        refGrade.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds: snapshot.getChildren()){
+                    Grade grade = snapshot.getValue(Grade.class);
+                    assert grade != null;
+                    if ((Objects.equals(grade.getTestId(), tId)) || (Objects.equals(grade.getUserId(), curUser.getUid()))){
+                        tGrade.setText(grade.getGrade().toString());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void init()
     {
         tName = findViewById(R.id.tName);
+        tGrade = findViewById(R.id.tGrade);
         tDescription = findViewById(R.id.tDescription);
         tPsychologistId = findViewById(R.id.tPsychologistId);
         refUsers = FirebaseDatabase.getInstance().getReference("Users");
         refTests = FirebaseDatabase.getInstance().getReference("Tests");
+        refGrade = FirebaseDatabase.getInstance().getReference("Grades");
         btnPassTest = findViewById(R.id.btnPassTest);
         btnUpdateTest = findViewById(R.id.btnUpdateTest);
         btnDeleteTest = findViewById(R.id.btnDeleteTest);
@@ -106,6 +130,11 @@ public class ShowTestActivity extends AppCompatActivity {
             btnPassTest.setVisibility(View.VISIBLE);
             btnPassTest.setOnClickListener(view -> {
                 Intent in = new Intent(ShowTestActivity.this, PassTestActivity.class);
+                in.putExtra("tId", tId);
+                in.putExtra("tName", tName.getText().toString());
+                in.putExtra("testDescription", tDescription.getText().toString());
+                in.putExtra("psychologistId",psychId);
+                in.putExtra("testIsOpen",tIsOpen);
                 startActivity(in);
             });
         }  else btnPassTest.setVisibility(View.INVISIBLE);

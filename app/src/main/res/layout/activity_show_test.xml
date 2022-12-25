@@ -31,6 +31,35 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_below="@+id/tPsychologistId" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_below="@+id/tDescription"
+        android:id="@+id/linGrade"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="30sp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Баллы: "
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_below="@+id/tPsychologistId" />
+
+        <TextView
+            android:id="@+id/tGrade"
+            android:layout_width="wrap_content"
+            android:textSize="30sp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_below="@+id/tPsychologistId" />
+
+    </LinearLayout>
+
     <TextView
         android:paddingTop="30dp"
         android:id="@+id/textPsych"
@@ -55,7 +84,7 @@
         android:layout_below="@+id/textPsych" />
 
     <Button
-        android:layout_below="@+id/tDescription"
+        android:layout_below="@+id/linGrade"
         android:id="@+id/btnPassTest"
         android:layout_centerHorizontal="true"
         android:text="Пройти"
