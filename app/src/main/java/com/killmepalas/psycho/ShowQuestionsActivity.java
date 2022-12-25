@@ -76,11 +76,12 @@ public class ShowQuestionsActivity extends AppCompatActivity {
                 int k = 0;
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Question question = ds.getValue(Question.class);
-                    question.setId(ds.getKey());
                     assert question != null;
+                    if (question.getTestId().equals(tId)){
+                    question.setId(ds.getKey());
                     listData.add(question.getName());
                     listTemp.add(question);
-                    k++;
+                    k++;}
                 }
                 if (k != 0) qNum.setText("Нашлось " + k + " вопроса(ов)");
                 else qNum.setText("Вопросов пока нет");
@@ -115,6 +116,7 @@ public class ShowQuestionsActivity extends AppCompatActivity {
             Question question = listTemp.get(i);
             Intent intent = new Intent(ShowQuestionsActivity.this, ShowAnswersActivity.class);
             intent.putExtra("qId", question.getId());
+            intent.putExtra("qName", question.getName());
             startActivity(intent);
             return true;
         });

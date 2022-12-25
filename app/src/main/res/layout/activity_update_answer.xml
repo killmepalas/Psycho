@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="40dp"
-    tools:context=".CreateAnswerActivity">
+    android:layout_marginTop="30dp"
+    tools:context=".UpdateAnswerActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Добавление ответа"
+        android:text="Редактирование ответа"
         android:textAlignment="center"
-        android:id="@+id/txtAddAnswer"
+        android:id="@+id/txtUpdateAnswer"
         android:layout_centerHorizontal="true"
         android:textSize="37sp"
         />
@@ -21,10 +21,10 @@
         android:layout_centerVertical="true"
         android:layout_marginTop="150dp"
         android:layout_centerHorizontal="true"
-        android:id="@+id/table_answer_add"
+        android:id="@+id/table_answer_update"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txtAddAnswer"
+        android:layout_below="@id/txtUpdateAnswer"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp">
 
@@ -38,7 +38,7 @@
                 android:textSize="20sp" />
 
             <EditText
-                android:id="@+id/etNameAnswer"
+                android:id="@+id/etNameAnswerUpdate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
@@ -54,7 +54,7 @@
                 android:textSize="20sp" />
 
             <CheckBox
-                android:id="@+id/cbIsRightAnswer"
+                android:id="@+id/cbIsRightAnswerUpdate"
                 android:layout_marginLeft="30dp">
             </CheckBox>
 
@@ -62,10 +62,10 @@
     </TableLayout>
 
     <Button
-        android:id="@+id/btn_save_answer"
+        android:id="@+id/btn_update_answer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/table_answer_add"
+        android:layout_below="@+id/table_answer_update"
         android:layout_marginLeft="60dp"
         android:layout_marginRight="60dp"
         android:layout_marginTop="100dp"
