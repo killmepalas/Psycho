@@ -59,7 +59,7 @@ public class UpdateAnswerActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 answer = snapshot.getValue(Answer.class);
                 aName.setText(answer.getName());
-                if (answer.isRight()) aIsRight.isChecked();
+                aIsRight.setChecked(answer.isRight());
             }
 
             @Override

@@ -63,7 +63,7 @@ public class UpdateTestActivity extends AppCompatActivity {
                 test.setId(snapshot.getKey());
                 tName.setText(test.getName());
                 tDescription.setText(test.getDescription());
-                if (test.isOpen()) tIsOpen.isChecked();
+                tIsOpen.setChecked(test.isOpen());
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
