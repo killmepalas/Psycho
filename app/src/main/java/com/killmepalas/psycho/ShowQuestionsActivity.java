@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -46,14 +48,14 @@ public class ShowQuestionsActivity extends AppCompatActivity {
         setOnClickItem();
     }
 
-    private void getIntentTest(){
+    private void getIntentTest() {
         Intent intent = getIntent();
-        if (intent != null){
+        if (intent != null) {
             tId = intent.getStringExtra("tId");
         }
     }
 
-    private void init(){
+    private void init() {
         qNum = findViewById(R.id.txtNumQuestions);
         qListView = findViewById(R.id.questionsList);
         btnAddQuestion = findViewById(R.id.btnAddQuestion);
@@ -61,18 +63,18 @@ public class ShowQuestionsActivity extends AppCompatActivity {
 
         listData = new ArrayList<>();
         listTemp = new ArrayList<>();
-        adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1, listData);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listData);
         qListView.setAdapter(adapter);
     }
 
-    private void getQuestionsFromDB(){
+    private void getQuestionsFromDB() {
         refQuestions.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (listData.size()>0) listData.clear();
-                if (listTemp.size()>0) listTemp.clear();
+                if (listData.size() > 0) listData.clear();
+                if (listTemp.size() > 0) listTemp.clear();
                 int k = 0;
-                for (DataSnapshot ds: snapshot.getChildren()){
+                for (DataSnapshot ds : snapshot.getChildren()) {
                     Question question = ds.getValue(Question.class);
                     question.setId(ds.getKey());
                     assert question != null;
@@ -80,7 +82,7 @@ public class ShowQuestionsActivity extends AppCompatActivity {
                     listTemp.add(question);
                     k++;
                 }
-                if (k!= 0) qNum.setText("Нашлось " + k + " вопроса(ов)");
+                if (k != 0) qNum.setText("Нашлось " + k + " вопроса(ов)");
                 else qNum.setText("Вопросов пока нет");
                 adapter.notifyDataSetChanged();
             }
@@ -92,29 +94,33 @@ public class ShowQuestionsActivity extends AppCompatActivity {
         });
     }
 
-    private void setOnClickItem()
-    {
+    private void setOnClickItem() {
         qListView.setOnItemClickListener((parent, view, position, iid) -> {
             Question question = listTemp.get(position);
-            refQuestions.child(question.getId()).removeValue();
             AlertDialog.Builder builder = new AlertDialog.Builder(ShowQuestionsActivity.this);
             builder.setTitle("Чего изволите?");
             builder.setMessage("Вот что можем предложить:");// заголовок
             builder.setPositiveButton("Удалить вопрос", (dialog, id) -> refQuestions.child(question.getId()).removeValue().addOnCompleteListener(
                     task -> Toast.makeText(ShowQuestionsActivity.this, "Вопрос покинул этот мир", Toast.LENGTH_SHORT).show()
             ));
-            builder.setNeutralButton("К ответам", (dialog, id) -> refQuestions.child(question.getId()).removeValue().addOnCompleteListener(
-                    task -> {
-                        Intent i = new Intent(ShowQuestionsActivity.this, ShowAnswersActivity.class);
-                        startActivity(i);
-                    }
-            ));
+            builder.setNeutralButton("Редактировать", (dialog, id) -> {
+                Intent i = new Intent(ShowQuestionsActivity.this, UpdateQuestionActivity.class);
+                i.putExtra("qId", question.getId());
+                startActivity(i);
+            });
             builder.setNegativeButton("Назад", (dialog, id) -> Toast.makeText(ShowQuestionsActivity.this, "Ну и как хотите", Toast.LENGTH_SHORT).show());
             builder.create().show();
         });
+        qListView.setOnItemLongClickListener((adapterView, view, i, l) -> {
+            Question question = listTemp.get(i);
+            Intent intent = new Intent(ShowQuestionsActivity.this, ShowAnswersActivity.class);
+            intent.putExtra("qId", question.getId());
+            startActivity(intent);
+            return true;
+        });
     }
 
-    private void setButtonsListeners(){
+    private void setButtonsListeners() {
         btnAddQuestion.setOnClickListener(view -> {
             Intent i = new Intent(ShowQuestionsActivity.this, CreateQuestionActivity.class);
             i.putExtra("tId", tId);

@@ -45,7 +45,7 @@ public class CreateQuestionActivity extends AppCompatActivity {
 
     private void addButtonListeners(){
         btnSave.setOnClickListener(view -> {
-            Question question = new Question(qName.getText().toString());
+            Question question = new Question(qName.getText().toString(), tId);
             refQuestions.push().setValue(question).addOnCompleteListener(task -> {
                 Toast.makeText(this, "Вопрос добавлен", Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(CreateQuestionActivity.this, ShowQuestionsActivity.class);
