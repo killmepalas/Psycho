@@ -123,6 +123,7 @@ public class AdminActivity extends AppCompatActivity {
         refUsers.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int k = 0;
                 if (listAc.size()>0) listAc.clear();
                 if (accounts.size()>0) accounts.clear();
                 for (DataSnapshot ds: snapshot.getChildren()){
@@ -137,8 +138,10 @@ public class AdminActivity extends AppCompatActivity {
                     if (account.getRole().contains(Integer.toString(st))){
                         listAc.add(account);
                         accounts.add(account.getEmail());
+                        k++;
                     }
                 }
+                if (k != 0) txt.setText("Нашлось " + k + " пользователей");
                 adapter.notifyDataSetChanged();
             }
 

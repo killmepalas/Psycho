@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -46,7 +48,7 @@ public class ShowAnswersActivity extends AppCompatActivity {
         setButtonsListeners();
     }
 
-    private void init(){
+    private void init() {
         btnAddAnswer = findViewById(R.id.btnAddAnswer);
         tvaNum = findViewById(R.id.txtNumAnswers);
         tvqName = findViewById(R.id.txtNameQuestion_showAnswers);
@@ -59,9 +61,9 @@ public class ShowAnswersActivity extends AppCompatActivity {
         tvqName.setText(qName);
     }
 
-    private void getIntentQuestion(){
+    private void getIntentQuestion() {
         Intent intent = getIntent();
-        if (intent != null){
+        if (intent != null) {
             qId = intent.getStringExtra("qId");
             qName = intent.getStringExtra("qName");
 
@@ -78,12 +80,13 @@ public class ShowAnswersActivity extends AppCompatActivity {
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Answer answer = ds.getValue(Answer.class);
                     assert answer != null;
-                    if (answer.getqId().equals(qId)){
-                    answer.setId(ds.getKey());
+                    if (answer.getqId().equals(qId)) {
+                        answer.setId(ds.getKey());
 
-                    listData.add(answer.getName());
-                    listTemp.add(answer);
-                    k++;}
+                        listData.add(answer.getName());
+                        listTemp.add(answer);
+                        k++;
+                    }
                 }
                 if (k != 0) tvaNum.setText("Нашлось " + k + " ответа(ов)");
                 else tvaNum.setText("Ответов пока нет");
@@ -128,4 +131,37 @@ public class ShowAnswersActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        super.onCreateOptionsMenu(menu);
+        menu.add("Мои психи");
+        menu.add("База тестов");
+        menu.add("Мои тесты");
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        String title = item.getTitle().toString();
+        switch (title) {
+            case "Мои психи": {
+                Intent intent = new Intent(ShowAnswersActivity.this, PsycActivity.class);
+                startActivity(intent);
+                break;
+            }
+            case "Мои тесты": {
+                Intent intent = new Intent(ShowAnswersActivity.this, TestActivity.class);
+                intent.putExtra("psychologist", true);
+                startActivity(intent);
+                break;
+            }
+            case "База тестов": {
+                Intent intent = new Intent(ShowAnswersActivity.this, MainActivity.class);
+                startActivity(intent);
+                break;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
