@@ -112,16 +112,12 @@ public class PassTestActivity extends AppCompatActivity {
             if (!(Integer.parseInt(numQuestion.getText().toString()) == questions.size()))
                 getAnswersFromDB(Integer.parseInt(numQuestion.getText().toString()));
             else {
-                Long score = grade / questions.size() * 100;
+                Long score = Long.valueOf(Math.round(grade / questions.size() * 100));
                 Grade gradee = new Grade(curUser.getUid(), tId, score);
-                if (Objects.equals(gradeId, "false"))
-                    refGrades.push().setValue(gradee).addOnCompleteListener(task -> {
-                        Toast.makeText(this, "Результаты записаны", Toast.LENGTH_SHORT).show();
-                    });
-                else
-                    refGrades.child(gradeId).child("grade").setValue(score).addOnCompleteListener(task -> {
-                        Toast.makeText(this, "Результаты записаны", Toast.LENGTH_SHORT).show();
-                    });
+                refGrades.child(tId).child(curUser.getUid()).setValue(score).addOnCompleteListener(task -> {
+                    Toast.makeText(this, "Результаты записаны", Toast.LENGTH_SHORT).show();
+                });
+
                 Intent i = new Intent(PassTestActivity.this, ShowTestActivity.class);
                 i.putExtra("testName", tName.getText().toString());
                 i.putExtra("testDescription", tD);
