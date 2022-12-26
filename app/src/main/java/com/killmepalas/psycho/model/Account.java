@@ -16,6 +16,15 @@ public class Account {
     private List<String> role = new ArrayList<>();
     private Long age;
     private String status;
+    private boolean assign;
+
+    public boolean isAssign() {
+        return assign;
+    }
+
+    public void setAssign(boolean assign) {
+        this.assign = assign;
+    }
 
     public String getStatus() {
         return status;

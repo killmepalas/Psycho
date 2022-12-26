@@ -27,8 +27,7 @@ public class PsycActivity extends AppCompatActivity {
     private FirebaseUser curUser;
     private DatabaseReference refRequests;
     private String REQUEST_KEY = "Requests";
-    private ArrayList<String> listAccountsReq;
-    private ArrayList<String> listAccountsPat;
+    private ArrayList<String> listAccounts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +45,7 @@ public class PsycActivity extends AppCompatActivity {
         tStatics = findViewById(R.id.tStaticsPsyc);
         mAuth = FirebaseAuth.getInstance();
         curUser = mAuth.getCurrentUser();
-        listAccountsReq = new ArrayList<>();
-        listAccountsPat = new ArrayList<>();
+        listAccounts = new ArrayList<>();
         refRequests = FirebaseDatabase.getInstance().getReference().child(REQUEST_KEY).child(curUser.getUid());
 
         tStatics.setOnClickListener(view ->{
@@ -65,24 +63,21 @@ public class PsycActivity extends AppCompatActivity {
                 int kPat = 0;
                 for (DataSnapshot ds: snapshot.getChildren()){
                     boolean flag = (boolean) ds.getValue();
-                    if (!flag) {
+                    if (!flag)
                         kReq++;
-                        listAccountsReq.add(ds.getKey());
-                    }
-                    else{
+                    else
                         kPat++;
-                        listAccountsPat.add(ds.getKey());
-                    }
+                    listAccounts.add(ds.getKey());
                 }
                 if (kReq!=0){
                     tReq.setText(Integer.toString(kReq));
                     tReq.setTextColor(android.graphics.Color.rgb(0,0,139));
-                    createList(tReq, listAccountsReq, "req");
+                    createList(tReq, listAccounts, false);
                 };
                 if (kPat != 0 ){
                     tPat.setText(Integer.toString(kPat));
                     tPat.setTextColor(android.graphics.Color.rgb(0,0,139));
-                    createList(tPat, listAccountsPat, "pat");
+                    createList(tPat, listAccounts, true);
                 }
             }
 
@@ -93,7 +88,7 @@ public class PsycActivity extends AppCompatActivity {
         });
     }
 
-    private void createList(TextView tv, ArrayList<String> accounts, String mod){
+    private void createList(TextView tv, ArrayList<String> accounts, boolean mod){
         tv.setOnClickListener(view -> {
             Intent intent = new Intent(PsycActivity.this, ListAccountsActivity.class);
             intent.putStringArrayListExtra("Accounts", accounts);

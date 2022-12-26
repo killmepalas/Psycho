@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,7 +35,8 @@ import java.util.List;
 
 public class TestActivity extends AppCompatActivity {
 
-
+    private DatabaseReference refAssigned;
+    private String ASSIGNED_KEY = "Assigned";
     private Button btnCreateTest;
     private TextView numTests;
     private List<String> listData;
@@ -48,36 +50,38 @@ public class TestActivity extends AppCompatActivity {
     private boolean psychologist, admin;
 
 
-    private enum status{
+    private enum status {
         assigned,
         passed,
         created
-    };
+    }
+
+    ;
 
     private NavigationBarView.OnItemSelectedListener mOnNavigationItemSelectedListener
             = item -> {
-                switch (item.getItemId()) {
-                    case R.id.navigation_created:
-                        getTestsFromDB(status.created);
-                        if (psychologist){
-                            btnCreateTest.setVisibility(View.VISIBLE);
-                            btnCreateTest.setOnClickListener(view -> {
-                                Intent intent = new Intent(TestActivity.this, CreateTestActivity.class);
-                                startActivity(intent);
-                            });
-                        }
-                        return true;
-                    case R.id.navigation_assigned:
-                        getTestsFromDB(status.assigned);
-                        btnCreateTest.setVisibility(View.INVISIBLE);
-                        return true;
-                    case R.id.navigation_passed:
-                        btnCreateTest.setVisibility(View.INVISIBLE);
-                        getTestsFromDB(status.passed);
-                        return true;
+        switch (item.getItemId()) {
+            case R.id.navigation_created:
+                getAssign(status.created);
+                if (psychologist) {
+                    btnCreateTest.setVisibility(View.VISIBLE);
+                    btnCreateTest.setOnClickListener(view -> {
+                        Intent intent = new Intent(TestActivity.this, CreateTestActivity.class);
+                        startActivity(intent);
+                    });
                 }
-                return false;
-            };
+                return true;
+            case R.id.navigation_assigned:
+                getAssign(status.assigned);
+                btnCreateTest.setVisibility(View.INVISIBLE);
+                return true;
+            case R.id.navigation_passed:
+                btnCreateTest.setVisibility(View.INVISIBLE);
+                getAssign(status.passed);
+                return true;
+        }
+        return false;
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,12 +89,12 @@ public class TestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test);
         init();
 
-        getTestsFromDB(status.assigned);
+        getAssign(status.assigned);
         setOnClickItem();
 
     }
 
-    private void init(){
+    private void init() {
         mAuth = FirebaseAuth.getInstance();
         curUser = mAuth.getCurrentUser();
         navigation = findViewById(R.id.navigationView);
@@ -99,8 +103,9 @@ public class TestActivity extends AppCompatActivity {
         listTemp = new ArrayList<>();
         listData = new ArrayList<>();
         refTests = FirebaseDatabase.getInstance().getReference("Tests");
+        refAssigned = FirebaseDatabase.getInstance().getReference(ASSIGNED_KEY);
         testsList = findViewById(R.id.testListMy);
-        adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1, listData);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listData);
         testsList.setAdapter(adapter);
         btnCreateTest = findViewById(R.id.btnCreateTest);
         getIntentMain();
@@ -108,43 +113,81 @@ public class TestActivity extends AppCompatActivity {
 
     }
 
-    private void getTestsFromDB(status st){
+    private void getAssign(status st) {
+        refAssigned.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (listData.size() > 0) listData.clear();
+                if (listTemp.size() > 0) listTemp.clear();
+                boolean flag = false;
+                if (st == status.created) getTestsFromDB();
+                else {
+                    int k = 0;
+                    if (st == status.assigned) flag = true;
+                    for (DataSnapshot ds : snapshot.getChildren()) {
+                        for (DataSnapshot dss : ds.getChildren()) {
+                            if (dss.getKey().equals(curUser.getUid()) & flag == (boolean) dss.getValue()) {
+                                k++;
+                                getAssignTestsFromDB(ds.getKey());
+                            }
+                        }
+                    }
+//                    if (k != 0)
+//                        numTests.setText("Нашлось " + k + " теста(ов)");
+//                    else
+//                        numTests.setText("Нет тестов");
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void getAssignTestsFromDB(String tId) {
+        refTests.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Test test = snapshot.child(tId).getValue(Test.class);
+                assert test != null;
+                test.setId(snapshot.child(tId).getKey());
+                listData.add(test.getName());
+                listTemp.add(test);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void getTestsFromDB() {
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (listData.size()>0) listData.clear();
-                if (listTemp.size() > 0)listTemp.clear();
                 int k = 0;
-                for (DataSnapshot ds: snapshot.getChildren()){
+                for (DataSnapshot ds : snapshot.getChildren()) {
                     Test test = ds.getValue(Test.class);
-                    test.setId(ds.getKey());
                     assert test != null;
-                    if (!st.name().equals("created")) {
-                        for (DataSnapshot dss : ds.child(st.name()).getChildren()) {
-                            if (dss.getKey() != null) {
-                                String user = dss.getKey();
-                                if (user.equals(curUser.getUid())) {
-                                    listData.add(test.getName());
-                                    listTemp.add(test);
-                                    k++;
-                                }
-                            }
-                        }
-                    } else {
-                        if(test.getPsychologistId()!= null) {
-                            if (test.getPsychologistId().equals(curUser.getUid())) {
-                                listData.add(test.getName());
-                                listTemp.add(test);
-                                k++;
-                            }
+                    test.setId(ds.getKey());
+                    if (test.getPsychologistId() != null) {
+                        if (test.getPsychologistId().equals(curUser.getUid())) {
+                            listData.add(test.getName());
+                            listTemp.add(test);
+                            k++;
                         }
                     }
                 }
                 adapter.notifyDataSetChanged();
                 if (k != 0)
-                numTests.setText("Нашлось " + k + " теста(ов)");
-                else if (st.name().equals("created")) numTests.setText("У вас нет ни одного созданного теста");
-                else numTests.setText("Нет тестов");
+                    numTests.setText("Нашлось " + k + " теста(ов)");
+                else
+                    numTests.setText("У вас нет ни одного созданного теста");
             }
 
             @Override
@@ -155,27 +198,24 @@ public class TestActivity extends AppCompatActivity {
         refTests.addValueEventListener(valueEventListener);
     }
 
-    private void setOnClickItem()
-    {
+    private void setOnClickItem() {
         testsList.setOnItemClickListener((parent, view, position, id) -> {
             Test test = listTemp.get(position);
             Intent i = new Intent(TestActivity.this, ShowTestActivity.class);
             i.putExtra("testName", test.getName());
             i.putExtra("testDescription", test.getDescription());
-            i.putExtra("psychologistId",test.getPsychologistId());
-            i.putExtra("testId",test.getId());
-            i.putExtra("testIsOpen",test.isOpen());
+            i.putExtra("psychologistId", test.getPsychologistId());
+            i.putExtra("testId", test.getId());
+            i.putExtra("testIsOpen", test.isOpen());
             startActivity(i);
         });
     }
 
-    private void getIntentMain()
-    {
+    private void getIntentMain() {
         Intent i = getIntent();
-        if(i != null)
-        {
-            psychologist = i.getBooleanExtra("psychologist",false);
-            admin = i.getBooleanExtra("admin",false);
+        if (i != null) {
+            psychologist = i.getBooleanExtra("psychologist", false);
+            admin = i.getBooleanExtra("admin", false);
         }
     }
 
@@ -183,11 +223,11 @@ public class TestActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         super.onCreateOptionsMenu(menu);
-        if (curUser !=null){
-            if (admin){
+        if (curUser != null) {
+            if (admin) {
                 menu.add("Управление пользователями");
             }
-            if (psychologist){
+            if (psychologist) {
                 menu.add("Мои психи");
             }
             menu.add("База тестов");

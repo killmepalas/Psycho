@@ -25,7 +25,7 @@ import java.util.Objects;
 
 public class ShowTestActivity extends AppCompatActivity {
     private TextView tName, tDescription, tPsychologistId, tGrade, gradeId;
-    private Button btnPassTest, btnUpdateTest, btnDeleteTest, btnShowQuestions;
+    private Button btnPassTest, btnUpdateTest, btnDeleteTest, btnShowQuestions, btnAssignTest;
     private FirebaseAuth mAuth;
     private FirebaseUser curUser;
     private DatabaseReference refUsers;
@@ -79,6 +79,7 @@ public class ShowTestActivity extends AppCompatActivity {
         btnUpdateTest = findViewById(R.id.btnUpdateTest);
         btnDeleteTest = findViewById(R.id.btnDeleteTest);
         btnShowQuestions = findViewById(R.id.btnShowQuestions);
+        btnAssignTest = findViewById(R.id.btnAssignTest);
         mAuth = FirebaseAuth.getInstance();
         curUser = mAuth.getCurrentUser();
     }
@@ -128,6 +129,13 @@ public class ShowTestActivity extends AppCompatActivity {
                 Intent in = new Intent(ShowTestActivity.this, ShowQuestionsActivity.class);
                 in.putExtra("tId", tId);
                 startActivity(in);
+            });
+
+            btnAssignTest.setVisibility(View.VISIBLE);
+            btnAssignTest.setOnClickListener(view ->{
+                Intent i = new Intent(ShowTestActivity.this, AssignTestActivity.class);
+                i.putExtra("tId", tId);
+                startActivity(i);
             });
         }
         if (tIsOpen){

@@ -96,43 +96,70 @@
         android:id="@+id/btnPassTest"
         android:layout_centerHorizontal="true"
         android:text="Пройти"
-        android:textSize="25sp"
+        android:textSize="20sp"
         android:visibility="invisible"
         android:layout_marginTop="30dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <Button
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:id="@+id/linBtn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
         android:layout_below="@+id/btnPassTest"
-        android:id="@+id/btnUpdateTest"
-        android:layout_centerHorizontal="true"
-        android:visibility="invisible"
-        android:text="Редактировать тест"
-        android:textSize="25sp"
-        android:layout_marginTop="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content">
 
-    <Button
-        android:layout_below="@+id/btnUpdateTest"
-        android:id="@+id/btnDeleteTest"
-        android:layout_centerHorizontal="true"
-        android:visibility="invisible"
-        android:text="Удалить тест"
-        android:textSize="25sp"
-        android:layout_marginTop="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btnUpdateTest"
+            android:visibility="invisible"
+            android:text="Редактировать тест"
+            android:textSize="15sp"
+            android:layout_marginRight="15dp"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"/>
 
-    <Button
-        android:layout_below="@+id/btnDeleteTest"
-        android:id="@+id/btnShowQuestions"
-        android:layout_centerHorizontal="true"
-        android:visibility="invisible"
-        android:text="Редактировать вопросы теста"
-        android:textAlignment="center"
-        android:textSize="25sp"
-        android:layout_marginTop="20dp"
+        <Button
+            android:id="@+id/btnDeleteTest"
+            android:layout_weight="1"
+            android:visibility="invisible"
+            android:text="Удалить тест"
+            android:layout_marginLeft="15dp"
+            android:textSize="15sp"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_below="@+id/linBtn"
+        android:layout_marginTop="20dp"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btnShowQuestions"
+            android:visibility="invisible"
+            android:text="Вопросы"
+            android:textAlignment="center"
+            android:textSize="15sp"
+            android:layout_weight="1"
+            android:layout_marginRight="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/btnAssignTest"
+            android:visibility="invisible"
+            android:layout_marginLeft="15dp"
+            android:text="Назначить"
+            android:textAlignment="center"
+            android:textSize="15sp"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+
 </RelativeLayout>

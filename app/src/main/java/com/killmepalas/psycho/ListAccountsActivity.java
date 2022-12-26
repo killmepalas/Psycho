@@ -27,7 +27,7 @@ import java.util.List;
 public class ListAccountsActivity extends AppCompatActivity {
 
     private ArrayList<String> listAccounts;
-    private String mod;
+    private boolean mod;
     private List<String> listNames;
     private List<String> listTemp;
     private TextView ac;
@@ -46,7 +46,7 @@ public class ListAccountsActivity extends AppCompatActivity {
 
         init();
         getPsycIntent();
-        setList();
+        setReq();
         setOnClickItem();
     }
 
@@ -56,16 +56,18 @@ public class ListAccountsActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(ListAccountsActivity.this);
             builder.setTitle("Подтвердите действие");
             builder.setMessage("Действие с пользователем");// заголовок
-            if (mod.equals("req"))
+            if (!mod)
                 builder.setPositiveButton("Принять заявку", (dialog, id) -> refRequests.child(curUser.getUid()).child(uId).setValue(true).addOnCompleteListener(
                         task -> {
                             Toast.makeText(ListAccountsActivity.this, "Заявка принята", Toast.LENGTH_SHORT).show();
+                            setReq();
                         }
                 ));
-            else if (mod.equals("pat"))
+            else if (mod)
                 builder.setPositiveButton("Удалить пациента", (dialog, id) -> refRequests.child(curUser.getUid()).child(uId).setValue(false).addOnCompleteListener(
                         task -> {
                             Toast.makeText(ListAccountsActivity.this, "Пациент удалён", Toast.LENGTH_SHORT).show();
+                            setReq();
                         }
                 ));
             builder.setNegativeButton("Назад", (dialog, id) -> Toast.makeText(ListAccountsActivity.this, "Ну и как хотите", Toast.LENGTH_SHORT).show());
@@ -91,36 +93,46 @@ public class ListAccountsActivity extends AppCompatActivity {
         Intent i = getIntent();
         if (i != null) {
             listAccounts = i.getStringArrayListExtra("Accounts");
-            mod = i.getStringExtra("mod");
+            mod = i.getBooleanExtra("mod", false);
         }
     }
 
-    private void setList() {
+    private void setUs(String id) {
+        refUser.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    if (ds.getKey().equals(id)){
+                        String email = ds.child("email").getValue().toString();
+                        String userId = ds.getKey();
+                        listNames.add(email);
+                        listTemp.add(userId);
+                    }
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void setReq(){
         refRequests.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                refUser.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (listNames.size() > 0) listNames.clear();
-                        for (DataSnapshot ds : snapshot.getChildren()) {
-                            for (String id : listAccounts) {
-                                if (id.equals(ds.getKey())) {
-                                    String email = ds.child("email").getValue().toString();
-                                    String userId = ds.getKey();
-                                    listNames.add(email);
-                                    listTemp.add(userId);
-                                }
-                            }
+                if (listNames.size() > 0) listNames.clear();
+                if (listTemp.size() > 0) listTemp.clear();
+                for (DataSnapshot ds: snapshot.child(curUser.getUid()).getChildren()){
+                    for (String id: listAccounts){
+                        if (id.equals(ds.getKey()) & mod == (boolean) ds.getValue()) {
+                            setUs(id);
+                            break;
                         }
-                        adapter.notifyDataSetChanged();
                     }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
+                }
             }
 
             @Override
