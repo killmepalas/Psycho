@@ -97,11 +97,9 @@ public class PassTestActivity extends AppCompatActivity {
 
     private void addButtonListener() {
         rgAnswers.setOnCheckedChangeListener((radioGroup, i) -> {
-            if (i == indexRightAnswer){
+            if (i == indexRightAnswer) {
                 count = 1;
-            }
-
-            else {
+            } else {
                 count = 0;
             }
         });
@@ -114,10 +112,13 @@ public class PassTestActivity extends AppCompatActivity {
             if (!(Integer.parseInt(numQuestion.getText().toString()) == questions.size()))
                 getAnswersFromDB(Integer.parseInt(numQuestion.getText().toString()));
             else {
-                int score = (int) Math.round ((grade / questions.size()) * 100);
-                refGrades.child(tId).child(curUser.getUid()).setValue(score).addOnCompleteListener(task -> {
-                    Toast.makeText(this, "Результаты записаны", Toast.LENGTH_SHORT).show();
-                });
+                boolean flag = false;
+                int score = (int) Math.round((grade / questions.size()) * 100);
+                if (curUser != null) {
+                    refGrades.child(tId).child(curUser.getUid()).setValue(score).addOnCompleteListener(task -> {
+                        Toast.makeText(this, "Результаты записаны", Toast.LENGTH_SHORT).show();
+                    });
+                } else flag = true;
 
                 Intent i = new Intent(PassTestActivity.this, ShowTestActivity.class);
                 i.putExtra("testName", tName.getText().toString());
@@ -125,6 +126,7 @@ public class PassTestActivity extends AppCompatActivity {
                 i.putExtra("psychologistId", tPsyc);
                 i.putExtra("testId", tId);
                 i.putExtra("testIsOpen", tOpen);
+                if (flag) i.putExtra("score", Integer.toString(score));
                 startActivity(i);
             }
         });

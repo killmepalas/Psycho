@@ -26,6 +26,8 @@ import com.killmepalas.psycho.model.Grade;
 import java.util.Objects;
 
 public class ShowTestActivity extends AppCompatActivity {
+
+    private String grade = "0";
     private TextView tName, tDescription, tPsychologistId, tGrade;
     private Button btnPassTest, btnUpdateTest, btnDeleteTest, btnShowQuestions, btnAssignTest;
     private FirebaseAuth mAuth;
@@ -48,8 +50,10 @@ public class ShowTestActivity extends AppCompatActivity {
         refGrade.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String grade = snapshot.child(tId).child(curUser.getUid()).getValue().toString();
-                tGrade.setText(grade);
+                if (curUser != null) {
+                    String grade = snapshot.child(tId).child(curUser.getUid()).getValue().toString();
+                    tGrade.setText(grade);
+                } else if (grade !=null) tGrade.setText(grade);
             }
 
             @Override
@@ -85,13 +89,14 @@ public class ShowTestActivity extends AppCompatActivity {
             psychId = i.getStringExtra("psychologistId");
             tId = i.getStringExtra("testId");
             tIsOpen = i.getBooleanExtra("testIsOpen", true);
+            grade = i.getStringExtra("score");
 
             getUserFromDB();
         }
     }
 
     private void getButtons() {
-        if (psychId.equals(curUser.getUid())) {
+        if (curUser != null && psychId.equals(curUser.getUid())) {
             btnUpdateTest.setVisibility(View.VISIBLE);
             btnUpdateTest.setOnClickListener(view -> {
                 Intent in = new Intent(ShowTestActivity.this, UpdateTestActivity.class);
