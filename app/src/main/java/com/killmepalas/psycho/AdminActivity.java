@@ -29,7 +29,7 @@ import java.util.List;
 
 public class AdminActivity extends AppCompatActivity {
 
-    private Button btnBlock;
+    private Button btnBlock, btnReq;
     private ListView lvAccounts;
     private List<String> accounts;
     private TextView txt;
@@ -69,6 +69,11 @@ public class AdminActivity extends AppCompatActivity {
             startActivity(intent);
         });
         setOnClickItem();
+
+        btnReq.setOnClickListener(view -> {
+            Intent intent = new Intent(AdminActivity.this, AdminReqActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void setOnClickItem()
@@ -93,11 +98,11 @@ public class AdminActivity extends AppCompatActivity {
 
             if (!account.getRole().contains("2")){
                 builder.setNeutralButton("Назначить психологом", (dialog, id) -> refUsers.child(account.getId()).child("roles").child("2").setValue("").addOnCompleteListener(
-                        task -> Toast.makeText(AdminActivity.this, "Пользователь назначен администратором", Toast.LENGTH_SHORT).show()
+                        task -> Toast.makeText(AdminActivity.this, "Пользователь назначен психологом", Toast.LENGTH_SHORT).show()
                 ));
             } else {
                 builder.setNeutralButton("Удалить из психологов", (dialog, id) -> refUsers.child(account.getId()).child("roles").child("2").removeValue().addOnCompleteListener(
-                        task -> Toast.makeText(AdminActivity.this, "Пользователь изгнан из администраторов", Toast.LENGTH_SHORT).show()
+                        task -> Toast.makeText(AdminActivity.this, "Пользователь изгнан из психологов", Toast.LENGTH_SHORT).show()
                 ));
             }
 
@@ -117,6 +122,7 @@ public class AdminActivity extends AppCompatActivity {
         navigation.setOnItemSelectedListener(mOnNavigationItemSelectedListener);
         txt = findViewById(R.id.txtAdmin);
         btnBlock = findViewById(R.id.btnBlock);
+        btnReq = findViewById(R.id.btnReq);
     }
 
     private void getUsersFromDB(int st){

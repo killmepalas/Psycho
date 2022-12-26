@@ -9,9 +9,19 @@
 
     <Button
         android:layout_width="match_parent"
+        android:id="@+id/btnReq"
+        android:text="Заявки"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:layout_width="match_parent"
         android:id="@+id/btnBlock"
         android:text="Бан"
-        android:layout_marginTop="20dp"
+        android:layout_below="@+id/btnReq"
+        android:layout_marginTop="5dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:layout_height="wrap_content"/>
