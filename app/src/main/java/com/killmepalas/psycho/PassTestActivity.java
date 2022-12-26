@@ -36,10 +36,9 @@ import java.util.Objects;
 
 public class PassTestActivity extends AppCompatActivity {
 
-    private String gradeId;
     private int indexRightAnswer = -1;
-    private Long grade = 0L;
-    private int k = 0;
+    private double grade = 0;
+    private int count = 0;
     private String tId, tD, tPsyc;
     private boolean tOpen;
     private List<Question> questions;
@@ -93,27 +92,29 @@ public class PassTestActivity extends AppCompatActivity {
             tD = i.getStringExtra("testDescription");
             tOpen = i.getBooleanExtra("testIsOpen", false);
             tPsyc = i.getStringExtra("psychologistId");
-            gradeId = i.getStringExtra("gradeId");
         }
     }
 
     private void addButtonListener() {
         rgAnswers.setOnCheckedChangeListener((radioGroup, i) -> {
-            if (i == indexRightAnswer)
-                k = 1;
-            else
-                k = 0;
+            if (i == indexRightAnswer){
+                count = 1;
+            }
+
+            else {
+                count = 0;
+            }
         });
 
         btnNext.setOnClickListener(view -> {
-            if (!(k == 0)) {
+            if (!(count == 0)) {
                 grade++;
+                indexRightAnswer = -1;
             }
             if (!(Integer.parseInt(numQuestion.getText().toString()) == questions.size()))
                 getAnswersFromDB(Integer.parseInt(numQuestion.getText().toString()));
             else {
-                Long score = Long.valueOf(Math.round(grade / questions.size() * 100));
-                Grade gradee = new Grade(curUser.getUid(), tId, score);
+                int score = (int) Math.round ((grade / questions.size()) * 100);
                 refGrades.child(tId).child(curUser.getUid()).setValue(score).addOnCompleteListener(task -> {
                     Toast.makeText(this, "Результаты записаны", Toast.LENGTH_SHORT).show();
                 });
@@ -126,7 +127,6 @@ public class PassTestActivity extends AppCompatActivity {
                 i.putExtra("testIsOpen", tOpen);
                 startActivity(i);
             }
-            ;
         });
     }
 

@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,7 +26,7 @@ import com.killmepalas.psycho.model.Grade;
 import java.util.Objects;
 
 public class ShowTestActivity extends AppCompatActivity {
-    private TextView tName, tDescription, tPsychologistId, tGrade, gradeId;
+    private TextView tName, tDescription, tPsychologistId, tGrade;
     private Button btnPassTest, btnUpdateTest, btnDeleteTest, btnShowQuestions, btnAssignTest;
     private FirebaseAuth mAuth;
     private FirebaseUser curUser;
@@ -46,15 +48,8 @@ public class ShowTestActivity extends AppCompatActivity {
         refGrade.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds: snapshot.getChildren()){
-                    Grade grade = ds.getValue(Grade.class);
-                    assert grade != null;
-                    grade.setId(ds.getKey());
-                    if ((Objects.equals(grade.getTestId(), tId)) || (Objects.equals(grade.getUserId(), curUser.getUid()))){
-                        tGrade.setText(grade.getGrade().toString());
-                        gradeId.setText(grade.getId());
-                    }
-                }
+                String grade = snapshot.child(tId).child(curUser.getUid()).getValue().toString();
+                tGrade.setText(grade);
             }
 
             @Override
@@ -65,12 +60,10 @@ public class ShowTestActivity extends AppCompatActivity {
         getButtons();
     }
 
-    private void init()
-    {
+    private void init() {
         tName = findViewById(R.id.tName);
         tGrade = findViewById(R.id.tGrade);
         tDescription = findViewById(R.id.tDescription);
-        gradeId = findViewById(R.id.gradeId);
         tPsychologistId = findViewById(R.id.tPsychologistId);
         refUsers = FirebaseDatabase.getInstance().getReference("Users");
         refTests = FirebaseDatabase.getInstance().getReference("Tests");
@@ -84,11 +77,9 @@ public class ShowTestActivity extends AppCompatActivity {
         curUser = mAuth.getCurrentUser();
     }
 
-    private void getIntentMain()
-    {
+    private void getIntentMain() {
         Intent i = getIntent();
-        if(i != null)
-        {
+        if (i != null) {
             tName.setText(i.getStringExtra("testName"));
             tDescription.setText(i.getStringExtra("testDescription"));
             psychId = i.getStringExtra("psychologistId");
@@ -99,8 +90,8 @@ public class ShowTestActivity extends AppCompatActivity {
         }
     }
 
-    private void getButtons(){
-        if (psychId.equals(curUser.getUid())){
+    private void getButtons() {
+        if (psychId.equals(curUser.getUid())) {
             btnUpdateTest.setVisibility(View.VISIBLE);
             btnUpdateTest.setOnClickListener(view -> {
                 Intent in = new Intent(ShowTestActivity.this, UpdateTestActivity.class);
@@ -116,7 +107,7 @@ public class ShowTestActivity extends AppCompatActivity {
                         task -> {
                             Toast.makeText(ShowTestActivity.this, "Тест покинул этот мир", Toast.LENGTH_SHORT).show();
                             Intent i = new Intent(ShowTestActivity.this, TestActivity.class);
-                            i.putExtra("psychologist",true);
+                            i.putExtra("psychologist", true);
                             startActivity(i);
                         }
                 ));
@@ -132,29 +123,28 @@ public class ShowTestActivity extends AppCompatActivity {
             });
 
             btnAssignTest.setVisibility(View.VISIBLE);
-            btnAssignTest.setOnClickListener(view ->{
+            btnAssignTest.setOnClickListener(view -> {
                 Intent i = new Intent(ShowTestActivity.this, AssignTestActivity.class);
                 i.putExtra("tId", tId);
                 startActivity(i);
             });
         }
-        if (tIsOpen){
+        if (tIsOpen) {
             btnPassTest.setVisibility(View.VISIBLE);
             btnPassTest.setOnClickListener(view -> {
                 Intent in = new Intent(ShowTestActivity.this, PassTestActivity.class);
                 in.putExtra("tId", tId);
                 in.putExtra("tName", tName.getText().toString());
                 in.putExtra("testDescription", tDescription.getText().toString());
-                in.putExtra("psychologistId",psychId);
-                in.putExtra("testIsOpen",tIsOpen);
-                in.putExtra("gradeId", gradeId.getText().toString());
+                in.putExtra("psychologistId", psychId);
+                in.putExtra("testIsOpen", tIsOpen);
 
                 startActivity(in);
             });
-        }  else btnPassTest.setVisibility(View.INVISIBLE);
+        } else btnPassTest.setVisibility(View.INVISIBLE);
     }
 
-    private void getUserFromDB(){
+    private void getUserFromDB() {
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -174,5 +164,23 @@ public class ShowTestActivity extends AppCompatActivity {
             }
         };
         refUsers.addValueEventListener(valueEventListener);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        super.onCreateOptionsMenu(menu);
+        menu.add("База тестов");
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        String title = item.getTitle().toString();
+        if ("База тестов".equals(title)) {
+            Intent intent = new Intent(ShowTestActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
