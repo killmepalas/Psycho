@@ -132,10 +132,10 @@ public class TestActivity extends AppCompatActivity {
                             }
                         }
                     }
-//                    if (k != 0)
-//                        numTests.setText("Нашлось " + k + " теста(ов)");
-//                    else
-//                        numTests.setText("Нет тестов");
+                    if (k != 0)
+                        numTests.setText("Нашлось " + k + " теста(ов)");
+                    else
+                        numTests.setText("Нет тестов");
                     adapter.notifyDataSetChanged();
                 }
             }
