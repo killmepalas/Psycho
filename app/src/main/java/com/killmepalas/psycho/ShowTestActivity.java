@@ -24,7 +24,7 @@ import com.killmepalas.psycho.model.Grade;
 import java.util.Objects;
 
 public class ShowTestActivity extends AppCompatActivity {
-    private TextView tName, tDescription, tPsychologistId, tGrade;
+    private TextView tName, tDescription, tPsychologistId, tGrade, gradeId;
     private Button btnPassTest, btnUpdateTest, btnDeleteTest, btnShowQuestions;
     private FirebaseAuth mAuth;
     private FirebaseUser curUser;
@@ -41,16 +41,18 @@ public class ShowTestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_test);
         init();
         getIntentMain();
-        getButtons();
+
 
         refGrade.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds: snapshot.getChildren()){
-                    Grade grade = snapshot.getValue(Grade.class);
+                    Grade grade = ds.getValue(Grade.class);
                     assert grade != null;
+                    grade.setId(ds.getKey());
                     if ((Objects.equals(grade.getTestId(), tId)) || (Objects.equals(grade.getUserId(), curUser.getUid()))){
                         tGrade.setText(grade.getGrade().toString());
+                        gradeId.setText(grade.getId());
                     }
                 }
             }
@@ -60,6 +62,7 @@ public class ShowTestActivity extends AppCompatActivity {
 
             }
         });
+        getButtons();
     }
 
     private void init()
@@ -67,6 +70,7 @@ public class ShowTestActivity extends AppCompatActivity {
         tName = findViewById(R.id.tName);
         tGrade = findViewById(R.id.tGrade);
         tDescription = findViewById(R.id.tDescription);
+        gradeId = findViewById(R.id.gradeId);
         tPsychologistId = findViewById(R.id.tPsychologistId);
         refUsers = FirebaseDatabase.getInstance().getReference("Users");
         refTests = FirebaseDatabase.getInstance().getReference("Tests");
@@ -135,6 +139,8 @@ public class ShowTestActivity extends AppCompatActivity {
                 in.putExtra("testDescription", tDescription.getText().toString());
                 in.putExtra("psychologistId",psychId);
                 in.putExtra("testIsOpen",tIsOpen);
+                in.putExtra("gradeId", gradeId.getText().toString());
+
                 startActivity(in);
             });
         }  else btnPassTest.setVisibility(View.INVISIBLE);

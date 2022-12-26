@@ -32,9 +32,12 @@ import com.killmepalas.psycho.model.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class PassTestActivity extends AppCompatActivity {
 
+    private String gradeId;
+    private int indexRightAnswer = -1;
     private Long grade = 0L;
     private int k = 0;
     private String tId, tD, tPsyc;
@@ -90,10 +93,17 @@ public class PassTestActivity extends AppCompatActivity {
             tD = i.getStringExtra("testDescription");
             tOpen = i.getBooleanExtra("testIsOpen", false);
             tPsyc = i.getStringExtra("psychologistId");
+            gradeId = i.getStringExtra("gradeId");
         }
     }
 
     private void addButtonListener() {
+        rgAnswers.setOnCheckedChangeListener((radioGroup, i) -> {
+            if (i == indexRightAnswer)
+                k = 1;
+            else
+                k = 0;
+        });
 
         btnNext.setOnClickListener(view -> {
             if (!(k == 0)) {
@@ -102,31 +112,26 @@ public class PassTestActivity extends AppCompatActivity {
             if (!(Integer.parseInt(numQuestion.getText().toString()) == questions.size()))
                 getAnswersFromDB(Integer.parseInt(numQuestion.getText().toString()));
             else {
-                Grade gradee = new Grade(curUser.getUid(),tId, grade);
-                refGrades.push().setValue(gradee).addOnCompleteListener(task -> {
-                    Toast.makeText(this, "Результаты записаны", Toast.LENGTH_SHORT).show();
-                });
+                Long score = grade / questions.size() * 100;
+                Grade gradee = new Grade(curUser.getUid(), tId, score);
+                if (Objects.equals(gradeId, "false"))
+                    refGrades.push().setValue(gradee).addOnCompleteListener(task -> {
+                        Toast.makeText(this, "Результаты записаны", Toast.LENGTH_SHORT).show();
+                    });
+                else
+                    refGrades.child(gradeId).child("grade").setValue(score).addOnCompleteListener(task -> {
+                        Toast.makeText(this, "Результаты записаны", Toast.LENGTH_SHORT).show();
+                    });
                 Intent i = new Intent(PassTestActivity.this, ShowTestActivity.class);
                 i.putExtra("testName", tName.getText().toString());
                 i.putExtra("testDescription", tD);
-                i.putExtra("psychologistId",tPsyc);
-                i.putExtra("testId",tId);
-                i.putExtra("testIsOpen",tOpen);
+                i.putExtra("psychologistId", tPsyc);
+                i.putExtra("testId", tId);
+                i.putExtra("testIsOpen", tOpen);
                 startActivity(i);
-            };
-        });
-
-        rgAnswers.setOnCheckedChangeListener((radioGroup, i) -> {
-            int count;
-            switch (i) {
-                case 0:
-                    count = 1;
-                default:
-                    count = 0;
             }
-            k = count;
+            ;
         });
-
     }
 
     private void getQuestionFromDB() {
@@ -149,7 +154,7 @@ public class PassTestActivity extends AppCompatActivity {
                 } else {
                     kQuestions.setText(Integer.toString(k));
                 }
-                if (questions != null) getAnswersFromDB(0);
+                if (questions.size() != 0) getAnswersFromDB(0);
             }
 
             @Override
@@ -186,11 +191,14 @@ public class PassTestActivity extends AppCompatActivity {
 
     private void addRB() {
         rgAnswers.removeAllViews();
+        int k = 0;
         for (Answer a : answers) {
             RadioButton newRadioButton = new RadioButton(this);
             newRadioButton.setText(a.getName());
-            if (a.isRight()) newRadioButton.setId(0);
+            newRadioButton.setId(k);
+            if (a.isRight()) indexRightAnswer = k;
             rgAnswers.addView(newRadioButton);
+            k++;
         }
     }
 }
