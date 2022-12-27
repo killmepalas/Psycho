@@ -51,9 +51,11 @@ public class ShowTestActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (curUser != null) {
-                    String grade = snapshot.child(tId).child(curUser.getUid()).getValue().toString();
-                    tGrade.setText(grade);
-                } else if (grade !=null) tGrade.setText(grade);
+                    if (snapshot.child(tId).child(curUser.getUid()).getValue() != null) {
+                        String grade = snapshot.child(tId).child(curUser.getUid()).getValue().toString();
+                        tGrade.setText(grade);
+                    }
+                } else if (grade != null) tGrade.setText(grade);
             }
 
             @Override

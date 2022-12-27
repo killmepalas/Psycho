@@ -41,7 +41,7 @@ public class ShowAccountActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser curUser;
     private DatabaseReference reqReference;
-    private boolean flag;
+    private boolean flag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +66,7 @@ public class ShowAccountActivity extends AppCompatActivity {
         curUser = mAuth.getCurrentUser();
         userDataBase = FirebaseDatabase.getInstance().getReference(USER_KEY).child(userId);
         reqReference = FirebaseDatabase.getInstance().getReference().child("Requests");
-        searchRequest();
+
 
         tvToPsyc.setOnClickListener(view -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(ShowAccountActivity.this);
@@ -98,10 +98,11 @@ public class ShowAccountActivity extends AppCompatActivity {
                     acName.setText(account.getLastname() + " " + account.getName() + " " + account.getMiddlename());
                 acEmail.setText(account.getEmail());
                 if (account.getAge() != null) acAge.setText("Возраст: " + account.getAge());
-                if (account.getRole().contains("2")){
+                if (account.getRole().contains("2")) {
                     acRole.setVisibility(View.VISIBLE);
                     tvToPsyc.setVisibility(View.INVISIBLE);
-                    acRole.setText("Психолог");}
+                    acRole.setText("Психолог");
+                }
             }
 
             @Override
@@ -111,13 +112,16 @@ public class ShowAccountActivity extends AppCompatActivity {
     }
 
     private void setButtons() {
-        if (curUser.getUid().equals(userId)) btnUpdateProfile.setVisibility(View.VISIBLE);
-        else if (!flag) {
-            btnAddPsychologist.setVisibility(View.VISIBLE);
-            btnRemovePsychologist.setVisibility(View.INVISIBLE);
-        } else {
-            btnRemovePsychologist.setVisibility(View.VISIBLE);
-            btnAddPsychologist.setVisibility(View.INVISIBLE);
+        searchRequest();
+        if (curUser != null) {
+            if (curUser.getUid().equals(userId)) btnUpdateProfile.setVisibility(View.VISIBLE);
+            else if (!flag) {
+                btnAddPsychologist.setVisibility(View.VISIBLE);
+                btnRemovePsychologist.setVisibility(View.INVISIBLE);
+            } else {
+                btnRemovePsychologist.setVisibility(View.VISIBLE);
+                btnAddPsychologist.setVisibility(View.INVISIBLE);
+            }
         }
         btnUpdateProfile.setOnClickListener(view -> {
             Intent intent = new Intent(ShowAccountActivity.this, AccountActivity.class);
@@ -157,7 +161,7 @@ public class ShowAccountActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.child(userId).getChildren()) {
-                    if (Objects.equals(ds.getKey(), curUser.getUid())) {
+                    if ( curUser != null && (Objects.equals(ds.getKey(), curUser.getUid()))) {
                         flag = true;
                         break;
                     }
